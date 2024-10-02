@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "W5K49x9lh4F1rqJGWrJdDc9HzDxvkGl+nY50KEySyB0=",
+  "Source": "HALLYU.Server",
+  "BasePath": "_content/HALLYU.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
