@@ -1,25 +1,27 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+ENV ASPNETCORE_URLS=https://+:5005;http://+:5006
+WORKDIR /home/hallyu
+EXPOSE 5005
+EXPOSE 5006
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["HALLYU.Server/HALLYU.Server.csproj", "HALLYU.Server/"]
-RUN dotnet restore "./HALLYU.Server/./HALLYU.Server.csproj"
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /
+SHELL ["/bin/bash", "-c"]
+COPY ["HALLYU.Server/HALLYU.Server/HALLYU.Server.csproj", "HALLYU.Server/Server/"]
+COPY ["HALLYU.Server/HALLYU.Domain/HALLYU.Domain.csproj", "HALLYU.Server/Domain/"]
+COPY ["HALLYU.Server/HALLYU.Infrastructure/HALLYU.Infrastructure.csproj", "HALLYU.Server/Infrastructure/"]
+RUN dotnet restore "HALLYU.Server/HALLYU.Server/HALLYU.Server.csproj" --disable-parallel
 COPY . .
-WORKDIR "/src/HALLYU.Server"
-RUN dotnet build "./HALLYU.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "HALLYU.Server/HALLYU.Server"
+RUN dotnet build "HALLYU.Server.csproj" -c Release -o /home/hallyu/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./HALLYU.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "HALLYU.Server.csproj" -c Release -o /home/hallyu/publish
 
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+WORKDIR /home/hallyu
+COPY --from=publish /home/hallyu/publish .
+WORKDIR /home/hallyu
 ENTRYPOINT ["dotnet", "HALLYU.Server.dll"]

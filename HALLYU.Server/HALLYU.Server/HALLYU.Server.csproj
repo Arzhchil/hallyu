@@ -7,6 +7,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>704ecf83-c3dc-43ac-a2c9-4d17c8b94817</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	  <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+	  <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,9 +19,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\HALLYU.Application\HALLYU.Application.csproj" />
+		<ProjectReference Include="..\HALLYU.Infrastructure\HALLYU.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>
