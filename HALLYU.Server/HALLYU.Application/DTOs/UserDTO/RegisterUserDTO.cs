@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System;
 
-namespace HALLYU.Domain.Entities
+namespace HALLYU.Application.DTOs.UserDTO
 {
-    public class User
+    public class RegisterUserDTO
     {
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Имя пользователя
         /// </summary>
-        [Required]
         public string Name { get; set; }
 
         /// <summary>
         /// Фамилия пользователя
         /// </summary>
-        [Required]
         public string LastName { get; set; } = string.Empty;
 
         /// <summary>
@@ -32,48 +23,31 @@ namespace HALLYU.Domain.Entities
         /// <summary>
         /// Пол пользователя
         /// </summary>
-        [Required]
         public char Sex { get; set; }
 
         /// <summary>
         /// Дата рождения пользователя
         /// </summary>
-        [Required]
         public DateTime BirthDate { get; set; }
 
         /// <summary>
         /// Почта пользователя
         /// </summary>
-        [Required]
         public string Mail { get; set; } = string.Empty;
 
         /// <summary>
         /// Номер телефона пользователя
         /// </summary>
-        [Required]
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
         /// Дата регистрации
         /// </summary>
-        [Required]
-        public DateTime RegDate { get; set; }
+        public DateTime RegDate { get; set; } = DateTime.Now;
 
         /// <summary>
-        /// Оплата пользователя
+        /// Пароль пользователя
         /// </summary>
-        [JsonIgnore]
-        public Payment Payment { get; set; }
-
-        public bool IsDelete { get; set; } = false;
-
-        /// <summary>
-        /// Связь пользователь-группа
-        /// </summary>
-        [JsonIgnore]
-        public IEnumerable<UsersGroup> UsersGroup { get; set; }
-
-        [JsonIgnore]
-        public UserDataIdentity UserDataIdentity { get; set; }
+        public string Passhowd { get; set; }
     }
 }

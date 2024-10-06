@@ -35,6 +35,7 @@ bld/
 bin/
 obj/
 
+**/HALLYU.Server/.vs/
 **/HALLYU.Server/Server/bin/
 **/HALLYU.Server/Server/obj/
 **/HALLYU.Server/Core/bin/

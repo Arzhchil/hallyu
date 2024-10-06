@@ -15,6 +15,7 @@ namespace HALLYU.Infrastructure.Context
         public DbSet<Hall> Halls { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<UsersGroup> UsersGroups { get; set; }
+        public DbSet<UserDataIdentity> UserDataIdentities { get; set; }
 
     }
 }
