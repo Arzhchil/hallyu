@@ -71,9 +71,19 @@ namespace HALLYU.Domain.Entities
         /// Связь пользователь-группа
         /// </summary>
         [JsonIgnore]
-        public IEnumerable<UsersGroup> UsersGroup { get; set; }
+        public IEnumerable<UsersGroup> UsersGroup { get; set; } = [];
 
+        /// <summary>
+        /// Идентификация пользоватея
+        /// </summary>
         [JsonIgnore]
         public UserDataIdentity UserDataIdentity { get; set; }
+
+        /// <summary>
+        /// Роли пользователя
+        /// </summary>
+        [JsonIgnore]
+        public ICollection<Roles> Roles { get; set; } = [];
+
     }
 }

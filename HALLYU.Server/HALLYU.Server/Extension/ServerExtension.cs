@@ -1,6 +1,7 @@
-﻿using HALLYU.Infrastructure.IdentityService;
+﻿using HALLYU.Application.Requirements;
+using HALLYU.Domain.Enums;
+using HALLYU.Infrastructure.IdentityService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -14,9 +15,16 @@ namespace HALLYU.Server.Extension
         {
             var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(options => { 
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opt => 
                 {
+                    opt.RequireHttpsMetadata = true;
+                    opt.SaveToken = true;
+
                     opt.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = false,
@@ -37,7 +45,19 @@ namespace HALLYU.Server.Extension
                     };
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("PermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement()));
+                options.AddPolicy("Delete", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Delete)));
+            });
+        }
+
+        public static IEndpointConventionBuilder RequiredPermissions<TBuilder>(this TBuilder builder,
+            params Permission[] permissions) where TBuilder : IEndpointConventionBuilder
+        {
+            return builder.RequireAuthorization(
+                policy => policy.AddRequirements(new PermissionRequirement(permissions))
+                );
         }
     }
 }
