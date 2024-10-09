@@ -1,10 +1,12 @@
-﻿using HALLYU.Application.DTOs.UserDTO;
+﻿using HALLYU.Application.DTOs.Permissions;
+using HALLYU.Application.DTOs.UserDTO;
 using HALLYU.Domain.Entities;
+using HALLYU.Domain.Enums;
 using HALLYU.Infrastructure.Context;
 using HALLYU.Infrastructure.IdentityService.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -30,7 +32,10 @@ namespace HALLYU.Infrastructure.IdentityService
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                int id = hallyuContext.Users.OrderBy(x => x.Id).Select(x => x.Id).FirstOrDefault() + 1;
+                var roles = hallyuContext.Roles.SingleOrDefault(r => r.Id == (int)Role.User) ??
+                    throw new InvalidOperationException();
+
+                int id = hallyuContext.Users.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault() + 1;
                 string hashedPassword = _passwordHasher.Generate(registerUserDTO.Passhowd);
                 User user = new User()
                 {
@@ -42,7 +47,8 @@ namespace HALLYU.Infrastructure.IdentityService
                     Name = registerUserDTO.Name,
                     Phone = registerUserDTO.Phone,
                     RegDate = registerUserDTO.RegDate,
-                    Sex = registerUserDTO.Sex
+                    Sex = registerUserDTO.Sex,
+                    Roles = [roles]
                 };
                 hallyuContext.Users.Add(user);
 
@@ -51,11 +57,27 @@ namespace HALLYU.Infrastructure.IdentityService
                     PasswordHash = hashedPassword,
                     UserId = id
                 };
-                hallyuContext.Add(userDataIdentity);
+                hallyuContext.UserDataIdentities.Add(userDataIdentity);
 
                 await hallyuContext.SaveChangesAsync();
                 scope.Complete();
             }
+        }
+
+        public async Task<HashSet<Permission>> GetUserPermissions(int userId)
+        {
+            var roles = await hallyuContext.Users
+                .AsNoTracking()
+                .Include(r => r.Roles)
+                .ThenInclude(p => p.Permissions)
+                .Where(r => r.Id == userId)
+                .Select(r => r.Roles)
+                .ToListAsync();
+
+            return roles.SelectMany(r => r)
+                .SelectMany(r => r.Permissions)
+                .Select(p => (Permission)p.Id)
+                .ToHashSet();
         }
 
         public async Task<string> Login(string email, string password)
@@ -78,5 +100,7 @@ namespace HALLYU.Infrastructure.IdentityService
 
             return token;
         }
+
+
     }
 }

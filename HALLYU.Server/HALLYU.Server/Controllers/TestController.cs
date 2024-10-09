@@ -9,7 +9,7 @@ namespace HALLYU.Server.Controllers
     public class TestController : BaseApiController<TestController>
     {
         [HttpPost(Name = "Test")]
-        [Authorize]
+        [Authorize(Policy = "Delete")]
         public async Task<IActionResult> Get([FromBody] TestCommand command, CancellationToken cancellationToken = default)
         {
             return Ok(await _mediator.Send(command, cancellationToken));

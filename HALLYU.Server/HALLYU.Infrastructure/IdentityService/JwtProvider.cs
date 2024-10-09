@@ -19,9 +19,15 @@ namespace HALLYU.Infrastructure.IdentityService
 
         public string GenerateToken(User user)
         {
-            Claim[] claims = [new("UserId", user.Id.ToString())];
+            Claim[] claims = {
+                new ("UserId", user.Id.ToString())
+            };
 
-            SigningCredentials signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)), SecurityAlgorithms.HmacSha256);
+            SigningCredentials signingCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_options.SecretKey)
+                    ),
+                SecurityAlgorithms.HmacSha256);
 
             JwtSecurityToken token = new JwtSecurityToken(
                 claims: claims,
