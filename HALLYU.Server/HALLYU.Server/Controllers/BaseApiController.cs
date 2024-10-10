@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HALLYU.Server.Controllers
 {
-    /// <summary>
-    /// Abstract BaseApi Controller Class
-    /// </summary>
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     public abstract class BaseApiController<T> : ControllerBase
     {
         private IMediator _mediatorInstance;

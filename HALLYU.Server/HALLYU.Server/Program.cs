@@ -1,10 +1,6 @@
 ﻿using HALLYU.Infrastructure.Context;
-using HALLYU.Infrastructure.IdentityService;
-using HALLYU.Infrastructure.IdentityService.Interface;
 using HALLYU.Server.Extension;
-using HALLYU.Server.Handlers.Authentication;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
+using HALLYU.Server.Middleware;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,24 +12,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddMediatR(configuration =>
-{
-    configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
-builder.Services.AddDbContext<HallyuContext>(op =>
-{
-    op.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
-});
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
-builder.Services.Configure<HALLYU.Domain.AuthorizationOptions>(builder.Configuration.GetSection("AuthorizationOptions"));
 builder.Services.AddServerExtension(builder.Configuration);
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddTransient<ExceptionMiddleware>();
-builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 
