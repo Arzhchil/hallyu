@@ -47,17 +47,29 @@ namespace HALLYU.Server.Extension
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("PermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement()));
-                options.AddPolicy("Delete", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Delete)));
-            });
-        }
+                options.AddPolicy("Read", policy => 
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Read])));
 
-        public static IEndpointConventionBuilder RequiredPermissions<TBuilder>(this TBuilder builder,
-            params Permission[] permissions) where TBuilder : IEndpointConventionBuilder
-        {
-            return builder.RequireAuthorization(
-                policy => policy.AddRequirements(new PermissionRequirement(permissions))
-                );
+                options.AddPolicy("Delete", policy => 
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Delete])));
+
+                options.AddPolicy("Update", policy => 
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Update])));
+
+                options.AddPolicy("Create", policy => 
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Create])));
+
+                options.AddPolicy("Admin", policy =>
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Delete,
+                        Permission.Create,
+                        Permission.Update,
+                        Permission.Read])));
+
+                options.AddPolicy("Employee", policy => 
+                    policy.Requirements.Add(new PermissionRequirement([Permission.Create,
+                        Permission.Update,
+                        Permission.Read])));
+            });
         }
     }
 }

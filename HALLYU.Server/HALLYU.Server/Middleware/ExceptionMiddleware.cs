@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace HALLYU.Server.Extension
+namespace HALLYU.Server.Middleware
 {
     public class ExceptionMiddleware : IMiddleware
     {
