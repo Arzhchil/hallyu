@@ -1,5 +1,4 @@
-﻿using HALLYU.Application.DTOs.Permissions;
-using HALLYU.Application.DTOs.UserDTO;
+﻿using HALLYU.Application.DTOs.UserDTO;
 using HALLYU.Domain.Entities;
 using HALLYU.Domain.Enums;
 using HALLYU.Infrastructure.Context;
@@ -28,10 +27,19 @@ namespace HALLYU.Infrastructure.IdentityService
             _jwtProvider = Jwtprovider;
         }
 
-        public async Task AddUser(RegisterUserDTO registerUserDTO)
+        public async Task<int> AddUser(RegisterUserDTO registerUserDTO)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
+                // проверки на почту и тд
+                User existedUser = hallyuContext.Users.FirstOrDefault(x => x.Mail == registerUserDTO.Mail);
+
+                if (existedUser != null)
+                {
+                    // пользователь с такой почтой уже существует
+                    return 0;
+                }
+
                 var roles = hallyuContext.Roles.SingleOrDefault(r => r.Id == (int)Role.User) ??
                     throw new InvalidOperationException();
 
@@ -61,6 +69,8 @@ namespace HALLYU.Infrastructure.IdentityService
 
                 await hallyuContext.SaveChangesAsync();
                 scope.Complete();
+
+                return id;
             }
         }
 
@@ -86,10 +96,15 @@ namespace HALLYU.Infrastructure.IdentityService
 
             if (user is null)
             {
-                throw new System.Exception("Пользователь с таким email не найден");
+                throw new System.Exception("Не удалось войти, проверьте верность введенных данных");
             }
 
-            var verifyResult = _passwordHasher.Verify(password, user.UserDataIdentity.PasswordHash);
+            if (!user.IsEmailConfirmed)
+            {
+                throw new System.Exception($"Ваша почта еще не подтверждена, мы отправили письмо с подтверждением на адрес {user.Mail}");
+            }
+
+            bool verifyResult = _passwordHasher.Verify(password, user.UserDataIdentity.PasswordHash);
 
             if (!verifyResult)
             {
@@ -101,6 +116,15 @@ namespace HALLYU.Infrastructure.IdentityService
             return token;
         }
 
+        public async Task ConfirmEmailAsync(int userId)
+        {
+            var user = await hallyuContext.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
 
+            if (user != null)
+            {
+                user.IsEmailConfirmed = true;
+                await hallyuContext.SaveChangesAsync();
+            }
+        }
     }
 }

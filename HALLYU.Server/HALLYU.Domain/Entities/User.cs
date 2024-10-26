@@ -65,7 +65,15 @@ namespace HALLYU.Domain.Entities
         [JsonIgnore]
         public Payment Payment { get; set; }
 
+        /// <summary>
+        /// Удален ли пользователь
+        /// </summary>
         public bool IsDelete { get; set; } = false;
+
+        /// <summary>
+        /// Подтвеждена ли почта
+        /// </summary>
+        public bool IsEmailConfirmed { get; set; } = false;
 
         /// <summary>
         /// Связь пользователь-группа

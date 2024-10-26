@@ -8,10 +8,12 @@ namespace HALLYU.Infrastructure.IdentityService.Interface
 {
     public interface IUserService
     {
-        public Task AddUser(RegisterUserDTO registerUserDTO);
+        public Task<int> AddUser(RegisterUserDTO registerUserDTO);
 
         public Task<string> Login(string email, string password);
 
         Task<HashSet<Permission>> GetUserPermissions(int userId);
+
+        public Task ConfirmEmailAsync(int userId);
     }
 }

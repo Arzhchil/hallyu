@@ -5,6 +5,10 @@ using HALLYU.Server.Handlers.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using HALLYU.Server.Middleware;
+using HALLYU.Infrastructure.MailService.MailModels;
+using HALLYU.Infrastructure.MailService;
+using HALLYU.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace HALLYU.Server.Extension
 {
@@ -24,6 +28,8 @@ namespace HALLYU.Server.Extension
 
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             services.Configure<HALLYU.Domain.AuthorizationOptions>(configuration.GetSection("AuthorizationOptions"));
+            services.AddSingleton(configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtProvider, JwtProvider>();

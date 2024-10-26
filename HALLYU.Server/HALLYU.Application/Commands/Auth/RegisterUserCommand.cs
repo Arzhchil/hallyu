@@ -3,5 +3,5 @@ using MediatR;
 
 namespace HALLYU.Application.Commands.Auth
 {
-    public record RegisterUserCommand(RegisterUserDTO registerUser) : IRequest<bool>;
+    public record RegisterUserCommand(RegisterUserDTO registerUser) : IRequest<int>;
 }

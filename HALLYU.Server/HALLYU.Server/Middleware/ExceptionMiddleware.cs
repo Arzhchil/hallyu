@@ -28,9 +28,9 @@ namespace HALLYU.Server.Middleware
                 ProblemDetails problem = new()
                 {
                     Status = (int)HttpStatusCode.BadRequest,
-                    Type = "Server error",
-                    Title = "Server error",
-                    Detail = "An internal server error"
+                    Type = "Bad Request",
+                    Title = "Bad Request",
+                    Detail = "Something went wrong"
                 };
 
                 string json = JsonSerializer.Serialize(problem);

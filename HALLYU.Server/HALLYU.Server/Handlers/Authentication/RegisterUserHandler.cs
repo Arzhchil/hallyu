@@ -4,7 +4,7 @@ using HALLYU.Infrastructure.IdentityService.Interface;
 
 namespace HALLYU.Server.Handlers.Authentication
 {
-    public class RegisterUserHandler : BaseServerHandler<RegisterUserCommand, bool>
+    public class RegisterUserHandler : BaseServerHandler<RegisterUserCommand, int>
     {
         private readonly IUserService _userService;
         public RegisterUserHandler(HallyuContext hallyuContext, IUserService userService) : base(hallyuContext)
@@ -12,11 +12,11 @@ namespace HALLYU.Server.Handlers.Authentication
             _userService = userService;
         }
 
-        public async override Task<bool> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async override Task<int> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            await _userService.AddUser(request.registerUser);
+            int result = await _userService.AddUser(request.registerUser);
 
-            return true;
+            return result;
         }
     }
 }
