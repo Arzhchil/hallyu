@@ -1,9 +1,22 @@
-import Image from "next/image";
+import React from "react";
+import Header from "@/app/components/Header-component";
+import Sidebar from "./components/Sidebar-component";
+import Main from "./components/Main-component";
+import Footer from "./components/Footer-component";
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
     <div>
-      123
+      <Header textColor="text-white" logoSrc="/Logo-white.svg" />
+      <Main></Main>
+      <Footer></Footer>
+      <Sidebar
+        border="border-white"
+        textColor="text-white"
+        bgColor="bg-black"
+      />
     </div>
   );
-}
+};
+
+export default Home;
