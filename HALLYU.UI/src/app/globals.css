@@ -3,16 +3,37 @@
 @tailwind utilities;
 
 @font-face {
-	font-family: 'Playfair-Display-Regular';
-	src: url('./fonts/PlayfairDisplay-Regular.woff');
-	font-weight: normal;
+	font-family: 'SF-Mono-Light';
+	src: url('./fonts/SFMono-Light.woff');
+	font-weight: 300;
 	font-style: normal;
 }
 
 @font-face {
-	font-family: 'Playfair-Display-Bold';
-	src: url('./fonts/PlayfairDisplay-Bold.woff');
-	font-weight: bold;
+	font-family: 'SF-Mono-Regular';
+	src: url('./fonts/SFMono-Regular.woff');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'SF-Mono-Bold';
+	src: url('./fonts/SFMono-Bold.woff');
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Segoi-UI-Regular';
+	src: url('./fonts/Segoe-UI.woff');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Segoi-UI-Bold';
+	src: url('./fonts/Segoe-UI-Bold.woff');
+	font-weight: 700;
 	font-style: normal;
 }
 
@@ -24,10 +45,14 @@
 
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: var(--text);
   background: var(--background);
-  font-family: 'Playfair-Display-Regular', Arial, Helvetica, sans-serif;
+  font-family: 'SF-Mono-Regular', Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
