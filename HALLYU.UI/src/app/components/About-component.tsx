@@ -2,7 +2,7 @@ import React from "react";
 import BigLetters from "./BigLetters-component";
 import AboutInfoBlock from "./About-InfoBlock-component";
 import DividingBlock from "./DividingBlock-component";
-import InfoAboutClasses from "./infoAboutClasse";
+import InfoAboutClasses from "./infoAboutClasses";
 import WatchStudio from "./WatchStudio-component";
 import InfoCard from "./InfoCard-component";
 

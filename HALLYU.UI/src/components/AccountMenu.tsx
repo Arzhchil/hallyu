@@ -1,8 +1,5 @@
-"use client";
-import React, { useState, FormEvent } from "react";
-
+import React, { useState, FormEvent, ChangeEvent, MouseEvent } from "react";
 import { RegisterUserDTO } from "@/app/models/RegisterUserDTO";
-
 import { useRegisterUser } from "@/app/hooks/useRegisterUser";
 
 interface AccountMenuProps {
@@ -10,34 +7,63 @@ interface AccountMenuProps {
   toggleMenu: () => void;
 }
 
+interface RegisterFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  sex: string;
+  birthDate: string;
+  phone: string;
+}
+
 const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [sex, setSex] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    sex: "",
+    birthDate: "",
+    phone: "",
+  });
 
   const { register, isLoading, error } = useRegisterUser();
 
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isPasswordValid = password.length >= 6;
-  const isConfirmPasswordValid = password === confirmPassword;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  const isPasswordValid = formData.password.length >= 6;
+  const isConfirmPasswordValid = formData.password === formData.confirmPassword;
   const isPersonalInfoValid =
-    firstName && lastName && sex && birthDate && phone;
+    formData.firstName !== "" &&
+    formData.lastName !== "" &&
+    formData.sex !== "" &&
+    formData.birthDate !== "" &&
+    formData.phone !== "";
 
   const handleTabSwitch = (tab: "login" | "register") => {
     setActiveTab(tab);
     setCurrentStep(1);
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      sex: "",
+      birthDate: "",
+      phone: "",
+    });
   };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
+  const handleMenuClick = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 
@@ -53,19 +79,28 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
     }
   };
 
-  // Функция для отправки данных регистрации на сервер
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleRegisterSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const registerData: RegisterUserDTO = {
-      Name: firstName,
-      LastName: lastName,
-      MiddleName: middleName,
-      Sex: sex.charAt(0),
-      BirthDate: new Date(birthDate),
-      Mail: email,
-      Phone: phone,
-      Password: password,
+      Name: formData.firstName,
+      LastName: formData.lastName,
+      MiddleName: formData.middleName,
+      Sex: formData.sex.charAt(0),
+      BirthDate: new Date(formData.birthDate),
+      Mail: formData.email,
+      Phone: formData.phone,
+      Password: formData.password,
     };
 
     await register(registerData);
@@ -161,10 +196,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="email"
+                            name="email"
                             placeholder="Введите ваш email"
                             className="border border-black p-2 w-full"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={formData.email}
+                            onChange={handleInputChange}
                             required
                           />
                           <button
@@ -189,10 +225,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="password"
+                            name="password"
                             placeholder="Введите пароль"
                             className="border border-black p-2 w-full mb-4"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={formData.password}
+                            onChange={handleInputChange}
                             required
                           />
                           <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -200,10 +237,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="password"
+                            name="confirmPassword"
                             placeholder="Подтвердите пароль"
                             className="border border-black p-2 w-full"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
                             required
                           />
                           <div className="flex justify-between mt-4">
@@ -239,10 +277,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="text"
+                            name="firstName"
                             placeholder="Введите имя"
                             className="border border-black p-2 w-full mb-4"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            value={formData.firstName}
+                            onChange={handleInputChange}
                             required
                           />
                           <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -250,10 +289,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="text"
+                            name="lastName"
                             placeholder="Введите фамилию"
                             className="border border-black p-2 w-full mb-4"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
+                            value={formData.lastName}
+                            onChange={handleInputChange}
                             required
                           />
                           <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -261,18 +301,20 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="text"
+                            name="middleName"
                             placeholder="Введите отчество"
                             className="border border-black p-2 w-full mb-4"
-                            value={middleName}
-                            onChange={(e) => setMiddleName(e.target.value)}
+                            value={formData.middleName}
+                            onChange={handleInputChange}
                           />
                           <label className="block mb-2 text-sm font-medium text-gray-700">
                             Пол
                           </label>
                           <select
                             className="border border-black p-2 w-full mb-4"
-                            value={sex}
-                            onChange={(e) => setSex(e.target.value)}
+                            name="sex"
+                            value={formData.sex}
+                            onChange={handleInputChange}
                             required
                           >
                             <option value="">Выберите пол</option>
@@ -285,9 +327,10 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
 
                           <input
                             type="date"
+                            name="birthDate"
                             className="border border-black p-2 w-full mb-4"
-                            value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)}
+                            value={formData.birthDate}
+                            onChange={handleInputChange}
                             required
                           />
                           <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -295,10 +338,11 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           </label>
                           <input
                             type="tel"
+                            name="phone"
                             placeholder="+7 (___) ___-__-__"
                             className="border border-black p-2 w-full"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
+                            value={formData.phone}
+                            onChange={handleInputChange}
                             required
                           />
                           <div className="flex justify-between mt-4">
@@ -333,28 +377,28 @@ const AccountMenu: React.FC<AccountMenuProps> = ({ isOpen, toggleMenu }) => {
                           <p className="mb-4">
                             Проверьте введенные данные перед отправкой.
                           </p>
-                          {/* Вывод данных для проверки */}
                           <ul className="mb-4">
                             <li>
-                              <strong>Email:</strong> {email}
+                              <strong>Email:</strong> {formData.email}
                             </li>
                             <li>
-                              <strong>Имя:</strong> {firstName}
+                              <strong>Имя:</strong> {formData.firstName}
                             </li>
                             <li>
-                              <strong>Фамилия:</strong> {lastName}
+                              <strong>Фамилия:</strong> {formData.lastName}
                             </li>
                             <li>
-                              <strong>Отчество:</strong> {middleName}
+                              <strong>Отчество:</strong> {formData.middleName}
                             </li>
                             <li>
-                              <strong>Пол:</strong> {sex}
+                              <strong>Пол:</strong> {formData.sex}
                             </li>
                             <li>
-                              <strong>Дата рождения:</strong> {birthDate}
+                              <strong>Дата рождения:</strong>{" "}
+                              {formData.birthDate}
                             </li>
                             <li>
-                              <strong>Телефон:</strong> {phone}
+                              <strong>Телефон:</strong> {formData.phone}
                             </li>
                           </ul>
                           <div className="flex justify-between mt-4">
